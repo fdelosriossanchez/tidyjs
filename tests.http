@@ -1,0 +1,9 @@
+@url = http://localhost:3000
+@data1 = [{"a":1,"J":"j","b":10,"c":100},{"a":1,"J":"k","b":60,"c":600},{"a":1,"J":"J","b":30,"c":300},{"a":2,"J":"j","b":20,"c":200},{"a":3,"J":"x","b":50,"c":500}]
+@data2 = [1, 2, 3, 4, 5]
+@data3 = {"id": "4656897675", "name": "John Doe"}
+###
+POST {{url}}/addRows?itemsToAdd={{data3}} HTTP/1.1
+Content-Type: application/json
+
+{{data1}}

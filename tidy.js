@@ -22,7 +22,7 @@ export const addItems = (data, parameters) => {
     let { itemsToAdd } = parameters
     itemsToAdd = parseParam(itemsToAdd)
 
-    if (!itemsToAdd) {
+    if (itemsToAdd) {
         return tidy(data, tidyjs.addItems(itemsToAdd))
     } else {
         throw new Error("itemsToAdd parameter is missing")
@@ -35,7 +35,7 @@ export const sort = (data, parameters) => {
     let { comparators } = parameters
     comparators = parseParam(comparators)
 
-    if (!comparators) {
+    if (comparators) {
         return tidy(data, tidyjs.sort(comparators))
     } else {
         throw new Error("comparators parameter is missing")
@@ -49,7 +49,7 @@ export const complete = (data, parameters) => {
     expandKeys = parseParam(expandKeys)
     replaceNullySpec = parseParam(replaceNullySpec)
 
-    if (!expandKeys || !replaceNullySpec) {
+    if (expandKeys && replaceNullySpec) {
         return tidy(data, tidyjs.complete(expandKeys, replaceNullySpec))
     } else {
         throw new Error("expandKeys or replaceNullySpec parameters are missing")
@@ -61,7 +61,7 @@ export const count = (data, parameters) => {
     groupKeys = parseParam(groupKeys)
     options = parseParam(options)
 
-    if (!groupKeys || !options) {
+    if (groupKeys && options) {
         return tidy(data, tidyjs.count(groupKeys, options))
     } else {
         throw new Error("groupKeys or options parameters are missing")
@@ -80,7 +80,7 @@ export const distinct = (data, parameters) => {
     let { keys } = parameters
     keys = parseParam(keys)
 
-    if (!keys) {
+    if (keys) {
         return tidy(data, tidyjs.distinct(keys))
     } else {
         throw new Error("keys parameter is missing")
@@ -91,7 +91,7 @@ export const expand = (data, parameters) => {
     let { expandKeys } = parameters
     expandKeys = parseParam(keys)
 
-    if (!expandKeys) {
+    if (expandKeys) {
         return tidy(data, tidyjs.expand(expandKeys))
     } else {
         throw new Error("expandKeys parameter is missing")
@@ -102,7 +102,7 @@ export const fill = (data, parameters) => {
     let { keys } = parameters
     keys = parseParam(keys)
 
-    if (!keys) {
+    if (keys) {
         return tidy(data, tidyjs.fill(keys))
     } else {
         throw new Error("keys parameter is missing")
@@ -113,7 +113,7 @@ export const filter = (data, parameters) => {
     let { filterFn } = parameters
     filterFn = parseParam(filterFn)
 
-    if (!filterFn) {
+    if (filterFn) {
         return tidy(data, tidyjs.filter(filterFn))
     } else {
         throw new Error("filterFn parameter is missing")
@@ -125,7 +125,7 @@ export const fullJoin = (data, parameters) => {
     itemsToJoin = parseParam(itemsToJoin)
     options = parseParam(options)
 
-    if (!itemsToJoin || !options) {
+    if (itemsToJoin && options) {
         return tidy(data, tidyjs.fullJoin(itemsToJoin, options))
     } else {
         throw new Error("itemsToJoin or options parameters are missing")
@@ -138,7 +138,7 @@ export const groupBy = (data, parameters) => {
     fns = parseParam(fns)
     options = parseParam(options)
 
-    if (!groupKeys || !fns) {
+    if (groupKeys && fns) {
         return tidy(data, tidyjs.groupBy(groupKeys, fns, options))
     } else {
         throw new Error("groupKeys or fns parameters are missing")
@@ -150,7 +150,7 @@ export const innerJoin = (data, parameters) => {
     itemsToJoin = parseParam(itemsToJoin)
     options = parseParam(options)
 
-    if (!itemsToJoin || !options) {
+    if (itemsToJoin && options) {
         return tidy(data, tidyjs.innerJoin(itemsToJoin, options))
     } else {
         throw new Error("itemsToJoin or options parameters are missing")
@@ -162,7 +162,7 @@ export const leftJoin = (data, parameters) => {
     itemsToJoin = parseParam(itemsToJoin)
     options = parseParam(options)
 
-    if (!itemsToJoin || !options) {
+    if (itemsToJoin && options) {
         return tidy(data, tidyjs.leftJoin(itemsToJoin, options))
     } else {
         throw new Error("itemsToJoin or options parameters are missing")
