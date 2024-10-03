@@ -3,6 +3,11 @@ import { redirect } from 'next/navigation'
 import * as tidy from '../../tidy'
 import { NextRequest } from 'next/server'
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher'
+import { env } from 'process'
+import { NextURL } from 'next/dist/server/web/next-url'
+import { Readable } from 'node:stream'
+
+const allowedDomain = env.ALLOWED_DOMAIN as string
 
 const DOCS: { [key: string]: string } = {
     addItems: '#additems--addrows',
@@ -16,37 +21,68 @@ const DOCS: { [key: string]: string } = {
     expand: '#expand',
     fill: '#fill',
     filter: '#filter',
-    fullJoin: '#fullJoin',
-    groupBy: '#groupBy',
-    innerJoin: '#innerJoin',
-    leftJoin: '#leftJoin',
+    fullJoin: '#fulljoin',
+    groupBy: '#groupby',
+    innerJoin: '#innerjoin',
+    leftJoin: '#leftjoin',
     map: '#map',
     mutate: '#mutate',
-    mutateWithSummary: '#mutateWithSummary',
+    mutateWithSummary: '#mutatewithsummary',
     pick: '#pick',
     rename: '#rename',
-    replaceNully: '#replaceNully',
+    replaceNully: '#replacenully',
     select: '#select',
     slice: '#slice',
-    sliceHead: '#sliceHead',
-    sliceMax: '#sliceMax',
-    sliceMin: '#sliceMin',
-    sliceSample: '#sliceSample',
-    sliceTail: '#sliceTail',
+    sliceHead: '#slicehead',
+    sliceMax: '#slicemax',
+    sliceMin: '#slicemin',
+    sliceSample: '#slicesample',
+    sliceTail: '#slicetail',
     summarize: '#summarize',
-    summarizeAll: '#summarizeAll',
-    summarizeAt: '#summarizeAt',
-    summarizeIf: '#summarizeIf',
+    summarizeAll: '#summarizeall',
+    summarizeAt: '#summarizeat',
+    summarizeIf: '#summarizeif',
     tally: '#tally',
     total: '#total',
-    totalAll: '#totalAll',
-    totalAt: '#totalAt',
-    totalIf: '#totalIf',
+    totalAll: '#totalall',
+    totalAt: '#totalat',
+    totalIf: '#totalif',
     transmute: '#transmute',
     when: '#when',
 }
 
 const DOCURL = 'https://pbeshai.github.io/tidy/docs/api/tidy/'
+
+const getBody = async (request: NextRequest): Promise<any> => {
+    let result
+
+    if (request.headers.get('x-fetch')) {
+        const call = request.headers.get('x-fetch')!
+        const method = call.substring(0, call.indexOf(' '))
+        const url = new NextURL(call.substring(call.indexOf(' ') + 1, call.length))
+        let body
+        if (request.headers.get('x-accept') === 'application/json') {
+            body = JSON.stringify(await request.json())
+        } else {
+            body = await request.text()
+        }
+        const headers = request.headers
+        headers.delete('x-fetch')
+        headers.delete('x-username')
+        headers.delete('content-length')
+        // headers.append('duplex', 'full')
+        const response = await fetch(url, {
+            headers,
+            method,
+            body,
+        })
+        result = await response.json()
+    } else {
+        result = await request.json()
+    }
+
+    return result
+}
 
 export async function GET(request: NextRequest, { params }: { params: Params }) {
     const { Function } = params
@@ -57,11 +93,15 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
 }
 
 export async function POST(request: NextRequest, { params }: { params: Params }) {
-    const headersList = headers()
-    if (headersList.get('content-type') !== 'application/json') {
+    const username = request.headers.get('x-username')
+    if (!username || !username.includes(allowedDomain)) {
+        return new Response()
+    }
+
+    if (request.headers.get('content-type') !== 'application/json') {
         throw new Error('Content type must be application/json')
     }
-    let body = await request.json()
+    let body = await getBody(request)
     const isArray = Array.isArray(body)
     if (!isArray) {
         body = [body]
@@ -74,5 +114,9 @@ export async function POST(request: NextRequest, { params }: { params: Params })
         response = response[0]
     }
 
-    return Response.json(response)
+    if (request.headers.get('x-accept') === 'text/plain') {
+        return new Response(JSON.stringify(response))
+    } else {
+        return Response.json(response)
+    }
 }

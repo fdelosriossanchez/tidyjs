@@ -8,10 +8,55 @@ Content-Type: application/json
 
 {{data1}}
 
+HTTP/1.1 308  - Permanent Redirect
+cache-control: public, max-age=0, must-revalidate
+content-type: text/plain
+date: Thu, 03 Oct 2024 10:22:06 GMT
+location: /addRows?itemsToAdd=%7B%22id%22%3A%20%224656897675%22%2C%20%22name%22%3A%20%22John%20Doe%22%7D
+refresh: 0;url=/addRows?itemsToAdd=%7B%22id%22%3A%20%224656897675%22%2C%20%22name%22%3A%20%22John%20Doe%22%7D
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+x-vercel-id: fra1::zlssg-1727950926653-bb09a9df4f23
+transfer-encoding: chunked
+
 HTTP/1.1 200  - OK
-vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
 content-type: application/json
-date: Wed, 02 Oct 2024 19:04:58 GMT
-connection: keep-alive
-keep-alive: timeout=5
+date: Thu, 03 Oct 2024 10:22:06 GMT
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch
+x-matched-path: /[Function]
+x-vercel-cache: MISS
+x-vercel-id: fra1::iad1::5mfwt-1727950926840-562d6b516ce9
+transfer-encoding: chunked
+###
+POST {{url}}/map?mapFn=(x)=>x.a HTTP/1.1
+Content-Type: application/json
+
+{{data1}}
+
+HTTP/1.1 308  - Permanent Redirect
+cache-control: public, max-age=0, must-revalidate
+content-type: text/plain
+date: Thu, 03 Oct 2024 10:24:41 GMT
+location: /map?mapFn=(x)%3D%3Ex.a
+refresh: 0;url=/map?mapFn=(x)%3D%3Ex.a
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+x-vercel-id: fra1::fmjwq-1727951081742-02fd18b9275c
+transfer-encoding: chunked
+
+HTTP/1.1 200  - OK
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+content-type: application/json
+date: Thu, 03 Oct 2024 10:24:42 GMT
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch
+x-matched-path: /[Function]
+x-vercel-cache: MISS
+x-vercel-id: fra1::iad1::d4b4c-1727951081924-e96fd6c90cad
 transfer-encoding: chunked
