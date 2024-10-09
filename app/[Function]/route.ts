@@ -112,11 +112,15 @@ export async function POST(request: NextRequest, { params }: { params: Params })
             response = response[0]
         }
 
+        let nextResponse
         if (request.headers.get('x-accept') === 'text/plain') {
-            return new NextResponse(JSON.stringify(response))
+            nextResponse = new NextResponse(JSON.stringify(response))
         } else {
-            return NextResponse.json(response)
+            nextResponse = NextResponse.json(response)
         }
+        nextResponse.headers.set('X-Count', response.length)
+
+        return nextResponse
     } catch (error) {
         return NextResponse.json({ error: (error as any).message }, { status: 500 })
     }
