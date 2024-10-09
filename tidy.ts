@@ -39,7 +39,53 @@ import {
     TMath,
 } from '@tidyjs/tidy'
 
+const TIDYFNS =
+    'asc,desc,fixedOrder,pivotWider,pivotLonger,fullSeq,fullSeqDate,fullSeqDateISOString,vectorSeq,vectorSeqDate,rate,cumsum,roll,lag,lead,rowNumber,sum,min,max,mean,meanRate,median,deviation,variance,n,nDistinct,first,last,everything,startsWith,endsWith,contains,matches,numRange,negate,TMath,'
 type tidyFn = (data: any[], parameters: { [key: string]: any }) => any
+
+const parseTidyFunctionCall = (param: string): any => {
+    const expression = `return ${param}`
+    const fn = new Function(TIDYFNS, expression)
+
+    return fn(
+        asc,
+        desc,
+        fixedOrder,
+        pivotWider,
+        pivotLonger,
+        fullSeq,
+        fullSeqDate,
+        fullSeqDateISOString,
+        vectorSeq,
+        vectorSeqDate,
+        rate,
+        cumsum,
+        roll,
+        lag,
+        lead,
+        rowNumber,
+        sum,
+        min,
+        max,
+        mean,
+        meanRate,
+        median,
+        deviation,
+        variance,
+        n,
+        nDistinct,
+        first,
+        last,
+        everything,
+        startsWith,
+        endsWith,
+        contains,
+        matches,
+        numRange,
+        negate,
+        TMath
+    )
+}
 
 const parseParam = (param: any): object => {
     let result
@@ -49,7 +95,9 @@ const parseParam = (param: any): object => {
     } catch (error) {
         try {
             result = JSON.parse(param)
-        } catch (error) {}
+        } catch (error) {
+            result = parseTidyFunctionCall(param)
+        }
     }
 
     return result
@@ -261,7 +309,7 @@ export const replaceNully: tidyFn = (data, parameters) => {
     }
 }
 
-export const select: tidyFn = (data, parameters) => {
+export const select: tidyFn = async (data, parameters) => {
     let { selectKeys } = parameters
     selectKeys = parseParam(selectKeys)
 

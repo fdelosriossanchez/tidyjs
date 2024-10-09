@@ -1,11 +1,9 @@
-import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import * as tidy from '../../tidy'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher'
 import { env } from 'process'
 import { NextURL } from 'next/dist/server/web/next-url'
-import { Readable } from 'node:stream'
 
 const allowedDomain = env.ALLOWED_DOMAIN as string
 
@@ -70,7 +68,6 @@ const getBody = async (request: NextRequest): Promise<any> => {
         headers.delete('x-fetch')
         headers.delete('x-username')
         headers.delete('content-length')
-        // headers.append('duplex', 'full')
         const response = await fetch(url, {
             headers,
             method,
@@ -89,34 +86,38 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     const anchor = DOCS[Function]
     const url = DOCURL + anchor
 
-    redirect(url)
+    redirect('url')
 }
 
 export async function POST(request: NextRequest, { params }: { params: Params }) {
-    const username = request.headers.get('x-username')
-    if (!username || !username.includes(allowedDomain)) {
-        return new Response()
-    }
+    try {
+        const username = request.headers.get('x-username')
+        if (!username || !username.includes(allowedDomain)) {
+            return new NextResponse()
+        }
 
-    if (request.headers.get('content-type') !== 'application/json') {
-        throw new Error('Content type must be application/json')
-    }
-    let body = await getBody(request)
-    const isArray = Array.isArray(body)
-    if (!isArray) {
-        body = [body]
-    }
-    const parameters = Object.fromEntries(request.nextUrl.searchParams)
-    const { Function } = params as { [key: string]: keyof typeof tidy }
+        if (request.headers.get('content-type') !== 'application/json') {
+            throw new Error('Content type must be application/json')
+        }
+        let body = await getBody(request)
+        const isArray = Array.isArray(body)
+        if (!isArray) {
+            body = [body]
+        }
+        const parameters = Object.fromEntries(request.nextUrl.searchParams)
+        const { Function } = params as { [key: string]: keyof typeof tidy }
 
-    let response = tidy[Function](body, parameters)
-    if (!isArray) {
-        response = response[0]
-    }
+        let response = await tidy[Function](body, parameters)
+        if (!isArray) {
+            response = response[0]
+        }
 
-    if (request.headers.get('x-accept') === 'text/plain') {
-        return new Response(JSON.stringify(response))
-    } else {
-        return Response.json(response)
+        if (request.headers.get('x-accept') === 'text/plain') {
+            return new NextResponse(JSON.stringify(response))
+        } else {
+            return NextResponse.json(response)
+        }
+    } catch (error) {
+        return NextResponse.json({ error: (error as any).message }, { status: 500 })
     }
 }
