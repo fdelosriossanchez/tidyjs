@@ -125,7 +125,7 @@ export async function POST(request: NextRequest, { params }: { params: Params })
 
         let nextResponse
         if (request.headers.get('x-accept') === 'text/plain') {
-            nextResponse = new NextResponse(JSON.stringify(response))
+            nextResponse = NextResponse.json({ text: JSON.stringify(response) })
         } else {
             nextResponse = NextResponse.json(response)
         }
