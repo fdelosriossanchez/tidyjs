@@ -65,7 +65,16 @@ const getBody = async (request: NextRequest): Promise<any> => {
             body = JSON.stringify(await request.json())
         }
         const headers = new Headers(request.headers)
+        const host = headers.get('x-host')
+        if (host) {
+            headers.set('Host', host)
+            headers.set('X-Forwarded-Host', host)
+        } else {
+            headers.set('Host', url.host)
+            headers.set('X-Forwarded-Host', url.host)
+        }
         headers.delete('x-fetch')
+        headers.delete('x-host')
         headers.delete('x-accept')
         headers.delete('x-username')
         headers.delete('x-total-count')
