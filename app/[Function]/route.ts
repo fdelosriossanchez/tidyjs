@@ -59,14 +59,16 @@ const getBody = async (request: NextRequest): Promise<any> => {
         const method = call.substring(0, call.indexOf(' '))
         const url = new NextURL(call.substring(call.indexOf(' ') + 1, call.length))
         let body
-        if (request.headers.get('x-accept') === 'application/json') {
-            body = JSON.stringify(await request.json())
-        } else {
+        if (request.headers.get('x-accept') === 'plain/text') {
             body = await request.text()
+        } else {
+            body = JSON.stringify(await request.json())
         }
-        const headers = request.headers
+        const headers = new Headers(request.headers)
         headers.delete('x-fetch')
+        headers.delete('x-accept')
         headers.delete('x-username')
+        headers.delete('x-total-count')
         headers.delete('content-length')
         const response = await fetch(url, {
             headers,
@@ -118,7 +120,7 @@ export async function POST(request: NextRequest, { params }: { params: Params })
         } else {
             nextResponse = NextResponse.json(response)
         }
-        nextResponse.headers.set('X-Count', response.length)
+        nextResponse.headers.set('X-Total-Count', response.length)
 
         return nextResponse
     } catch (error) {
